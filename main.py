@@ -34,22 +34,22 @@ class MyStream(tweepy.StreamingClient):
     def on_tweet(self, tweet):
         # Displaying tweet in console
         print(tweet)
-        print(tweet.keys())
-        print(tweet.created_at)
         data = {
             'tweet_id': tweet['id'],
             'tweet_text': tweet['text']
         }
+        print(data)
         response = kinesis_client.put_record(
             StreamName=kinesis_stream_name,
             Data=json.dumps(data),
             PartitionKey=partition_key)
         print('Status: ' +
               json.dumps(response['ResponseMetadata']['HTTPStatusCode']))
+        print(json.dumps(response))
 
 
 session = boto3.Session()
-kinesis_client = session.client('kinesis')
+kinesis_client = session.client('kinesis', region_name='us-east-2')
 partition_key = str(uuid.uuid4())
 
 # Creating Stream object
